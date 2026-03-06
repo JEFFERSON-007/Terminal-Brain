@@ -71,10 +71,11 @@ def ask(
 def predict(
     command: Optional[str] = typer.Argument(None, help="Current command (optional)"),
     top_n: int = typer.Option(3, "--top", "-t", help="Number of predictions"),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Show minimal inline suggestion"),
 ) -> None:
     """Predict next command"""
 
-    async def _predict(cmd: Optional[str], n: int):
+    async def _predict(cmd: Optional[str], n: int, quiet_mode: bool):
         engine = RecommendationEngine()
         await engine.initialize()
 
@@ -86,29 +87,42 @@ def predict(
             if history.commands:
                 current_cmd = history.commands[-1]
             else:
-                console.print("[red]No command history found[/red]")
+                if not quiet_mode:
+                    console.print("[red]No command history found[/red]")
                 return
 
-        with console.status("[bold cyan]Predicting..."):
+        if not quiet_mode:
+            with console.status("[bold cyan]Predicting..."):
+                predictions = await engine.predict_next(current_cmd, top_n=n)
+        else:
             predictions = await engine.predict_next(current_cmd, top_n=n)
 
         if not predictions:
-            console.print("[red]No predictions available[/red]")
+            if not quiet_mode:
+                console.print("[red]No predictions available[/red]")
             return
 
-        console.print(f"\n[bold]Current command:[/bold] {current_cmd}")
-        console.print("[bold]Predicted next commands:[/bold]\n")
+        if quiet_mode:
+            # Minimal inline suggestion for shell integration
+            top_prediction = predictions[0]
+            if top_prediction.confidence > 0.1:  # Only show if confidence > 10%
+                # Use plain print to avoid Rich Console issues in shell integration
+                print(f"\033[2;36m→ Next: {top_prediction.command}\033[0m")
+        else:
+            # Full table display
+            console.print(f"\n[bold]Current command:[/bold] {current_cmd}")
+            console.print("[bold]Predicted next commands:[/bold]\n")
 
-        table = Table(show_header=True)
-        table.add_column("Command", style="green")
-        table.add_column("Probability", style="yellow")
+            table = Table(show_header=True)
+            table.add_column("Command", style="green")
+            table.add_column("Probability", style="yellow")
 
-        for suggestion in predictions:
-            table.add_row(suggestion.command, f"{suggestion.confidence:.0%}")
+            for suggestion in predictions:
+                table.add_row(suggestion.command, f"{suggestion.confidence:.0%}")
 
-        console.print(table)
+            console.print(table)
 
-    asyncio.run(_predict(command, top_n))
+    asyncio.run(_predict(command, top_n, quiet))
 
 
 @app.command()
@@ -425,16 +439,30 @@ def setup_shell(
     # Check if already added
     if rc_file.exists():
         content = rc_file.read_text()
-        if str(target_file) in content:
-            console.print(f"[yellow]![/yellow] Shell integration already configured in {rc_file}")
-        else:
-            # Ask user if they want to add it
-            add_to_rc = typer.confirm(f"\nAdd source line to {rc_file}?", default=True)
-            if add_to_rc:
-                with open(rc_file, "a") as f:
-                    f.write(f"\n# Terminal Brain shell integration\n")
-                    f.write(source_line)
-                console.print(f"[green]✓[/green] Added source line to {rc_file}")
+        # Remove any old/duplicate terminal brain entries
+        lines = content.split('\n')
+        cleaned_lines = []
+        skip_next = False
+        for i, line in enumerate(lines):
+            if 'Terminal Brain shell integration' in line or 'terminalbrain/shell' in line:
+                skip_next = True
+                continue
+            if skip_next and line.strip() == '':
+                skip_next = False
+                continue
+            if 'source' in line and 'terminalbrain' in line:
+                continue
+            cleaned_lines.append(line)
+            skip_next = False
+        
+        # Ask user if they want to add it
+        add_to_rc = typer.confirm(f"\nAdd source line to {rc_file}?", default=True)
+        if add_to_rc:
+            with open(rc_file, "w") as f:
+                f.write('\n'.join(cleaned_lines))
+                f.write(f"\n\n# Terminal Brain shell integration\n")
+                f.write(source_line)
+            console.print(f"[green]✓[/green] Added source line to {rc_file} (removed any duplicates)")
     else:
         console.print(f"[yellow]![/yellow] {rc_file} not found. Creating it...")
         rc_file.write_text(source_line)
