@@ -126,6 +126,28 @@ sudo apt update
 sudo apt install terminal-brain
 ```
 
+### Local testing tip (important)
+
+For `file:` repositories, avoid paths with spaces and ensure `_apt` can read the repository tree.
+
+Recommended local path:
+
+```bash
+sudo mkdir -p /srv/apt/terminal-brain
+sudo chown -R "$USER":"$USER" /srv/apt/terminal-brain
+./scripts/generate_apt_repo.sh /srv/apt/terminal-brain ./dist/deb
+sudo chmod -R a+rX /srv/apt/terminal-brain
+echo "deb [trusted=yes] file:/srv/apt/terminal-brain stable main" | sudo tee /etc/apt/sources.list.d/terminalbrain-local.list
+sudo apt update
+sudo apt install terminal-brain
+```
+
+You can also use the helper script:
+
+```bash
+./scripts/setup_local_apt_repo.sh
+```
+
 Then:
 
 ```bash

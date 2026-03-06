@@ -177,6 +177,13 @@ sudo apt update
 sudo apt install terminal-brain
 ```
 
+For local repository testing on one machine, use:
+
+```bash
+./scripts/setup_local_apt_repo.sh
+sudo apt install terminal-brain
+```
+
 Full packaging/repository instructions are in [docs/packaging/APT_DISTRIBUTION.md](docs/packaging/APT_DISTRIBUTION.md).
 
 ## Quick Start
