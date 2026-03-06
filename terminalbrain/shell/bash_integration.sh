@@ -11,6 +11,7 @@ alias ask='terminalbrain ask'
 alias tbdash='terminalbrain dashboard'
 alias tbpred='terminalbrain predict'
 alias tban='terminalbrain analyze'
+alias tbmod='terminalbrain modules'
 
 # Real-time suggestion on every prompt
 # Shows predicted next command before you type
@@ -26,6 +27,7 @@ tb_help() {
     echo "  tbdash            - Show system dashboard"
     echo "  tbpred            - Predict next command"
     echo "  tban              - Analyze command history"
+    echo "  tbmod             - List/manage modules"
     echo ""
     echo "Examples:"
     echo "  tb find large files"
