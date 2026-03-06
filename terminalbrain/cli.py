@@ -217,6 +217,114 @@ def generate(
 
 
 @app.command()
+def search() -> None:
+    """Interactive search for commands with AI-powered suggestions (like search engines)."""
+    import os
+    
+    try:
+        from prompt_toolkit import PromptSession
+        from prompt_toolkit.history import History
+        from prompt_toolkit.completion import Completer, Completion
+        from prompt_toolkit.document import Document
+    except ImportError:
+        console.print("[red]prompt_toolkit not installed. Install with:[/red]")
+        console.print("[yellow]pip install prompt_toolkit[/yellow]")
+        return
+
+    async def _search():
+        engine = RecommendationEngine()
+        await engine.initialize()
+        
+        history_analyzer = HistoryAnalyzer()
+        history_analyzer.load_history()
+        
+        console.clear()
+        console.print("[bold cyan]╔═══════════════════════════════════════════════════╗[/bold cyan]")
+        console.print("[bold cyan]║  Terminal Brain Interactive Command Search       ║[/bold cyan]")
+        console.print("[bold cyan]╚═══════════════════════════════════════════════════╝[/bold cyan]\n")
+        console.print("[dim]Type your search query below (like a search engine)[/dim]")
+        console.print("[dim]Then select a command number or search again[/dim]")
+        console.print("[dim]Press Ctrl+C to exit\n[/dim]")
+        
+        session = PromptSession(history=History())
+        current_suggestions = []
+        
+        try:
+            while True:
+                # Get search query
+                query = session.prompt(
+                    "[bold cyan]🔍 Search:[/bold cyan] ",
+                    multiline=False,
+                )
+                
+                if not query.strip():
+                    continue
+                
+                with console.status("[bold cyan]Analyzing your query..."):
+                    # Get AI recommendations for the query
+                    suggestions = await engine.recommend(query, top_n=7)
+                
+                if not suggestions:
+                    console.print("[yellow]✗ No suggestions found for that query[/yellow]\n")
+                    continue
+                
+                # Display results like a search engine
+                console.print("\n[bold cyan]Results:[/bold cyan]\n")
+                
+                table = Table(show_header=True, header_style="bold cyan", padding=(0, 2))
+                table.add_column("#", style="cyan", width=3)
+                table.add_column("Command", style="green")
+                table.add_column("Match", style="yellow", width=10)
+                
+                for i, suggestion in enumerate(suggestions, 1):
+                    # Truncate long commands for display
+                    cmd = suggestion.command if len(suggestion.command) <= 60 else suggestion.command[:57] + "..."
+                    confidence = f"{suggestion.confidence:.0%}"
+                    
+                    table.add_row(
+                        f"[cyan]{i}[/cyan]",
+                        f"[green]{cmd}[/green]",
+                        f"[yellow]{confidence}[/yellow]"
+                    )
+                
+                console.print(table)
+                current_suggestions = suggestions
+                
+                # Get user selection
+                console.print("\n[bold]Choose action:[/bold]")
+                console.print("[dim]• Type [bold]1-7[/bold] to execute that command[/dim]")
+                console.print("[dim]• Type new query to search again[/dim]")
+                console.print("[dim]• Press [bold]Ctrl+C[/bold] to exit\n[/dim]")
+                
+                action = session.prompt("[bold cyan]→ Action:[/bold cyan] ")
+                
+                if action.strip().isdigit():
+                    idx = int(action.strip()) - 1
+                    if 0 <= idx < len(current_suggestions):
+                        selected_cmd = current_suggestions[idx].command
+                        console.print(f"\n[bold green]✓ Executing:[/bold green] [yellow]{selected_cmd}[/yellow]\n")
+                        console.print("[dim]" + "─" * 60 + "[/dim]")
+                        
+                        # Execute the command
+                        os.system(selected_cmd)
+                        
+                        console.print("[dim]" + "─" * 60 + "[/dim]")
+                        console.print("\n[dim]Ready for new search[/dim]\n")
+                    else:
+                        console.print("[red]✗ Invalid selection[/red]\n")
+                elif action.strip():
+                    # Continue searching with new query
+                    query = action
+                    continue
+                
+        except KeyboardInterrupt:
+            console.print("\n[yellow]✓ Search closed[/yellow]\n")
+            return
+
+    asyncio.run(_search())
+
+
+@app.command()
 def config(
     action: str = typer.Argument("show", help="Action: show, edit, reset"),
 ) -> None:
