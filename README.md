@@ -186,6 +186,35 @@ sudo apt install terminal-brain
 
 Full packaging/repository instructions are in [docs/packaging/APT_DISTRIBUTION.md](docs/packaging/APT_DISTRIBUTION.md).
 
+### Lightweight Installation with Optional Modules
+
+Terminal Brain is now modular. The **base installation is lightweight** (~30 MB).
+
+**Minimal install** (API-based AI, no heavy dependencies):
+
+```bash
+pip install terminalbrain
+```
+
+**With optional modules**:
+
+```bash
+pip install terminalbrain[llm]              # Local LLM support
+pip install terminalbrain[prediction]       # ML-based prediction
+pip install terminalbrain[knowledgebase]    # Vector search KB
+pip install terminalbrain[all]              # Everything
+```
+
+**Manage modules**:
+
+```bash
+terminal-brain modules                      # List available modules
+terminal-brain install llm                  # Install a module
+terminal-brain uninstall llm                # Uninstall a module
+```
+
+See [docs/LIGHTWEIGHT_INSTALL.md](docs/LIGHTWEIGHT_INSTALL.md) for detailed options.
+
 ## Quick Start
 
 ### Ask for Command Suggestions

@@ -44,7 +44,14 @@ Build and publish Terminal Brain as a Debian package:
 3. [scripts/generate_apt_repo.sh](scripts/generate_apt_repo.sh) - Generate APT repository indexes
 4. [.github/workflows/debian-package.yml](.github/workflows/debian-package.yml) - Automated CI/CD pipeline
 
-### 📝 For Contributing
+### � For Plugin System
+Extend Terminal Brain with optional modules:
+
+1. [docs/PLUGIN_SYSTEM.md](docs/PLUGIN_SYSTEM.md) - Plugin architecture and module guide
+2. [terminalbrain/plugins/__init__.py](terminalbrain/plugins/__init__.py) - Plugin manager implementation
+3. [docs/LIGHTWEIGHT_INSTALL.md](docs/LIGHTWEIGHT_INSTALL.md) - Installation options and module management
+
+### �📝 For Contributing
 If you want to extend Terminal Brain:
 
 1. [CONTRIBUTING.md](CONTRIBUTING.md) - Development guidelines

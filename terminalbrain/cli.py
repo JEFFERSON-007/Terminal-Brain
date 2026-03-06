@@ -310,6 +310,74 @@ def version() -> None:
     console.print(f"[bold cyan]Terminal Brain[/bold cyan] v{__version__}")
 
 
+@app.command()
+def install(
+    module: str = typer.Argument(..., help="Module to install (llm, prediction, knowledgebase, voice, workflows)"),
+) -> None:
+    """Install optional modules."""
+    from terminalbrain.plugins import PluginManager
+    
+    manager = PluginManager()
+    
+    console.print(f"[bold cyan]Installing module: {module}[/bold cyan]")
+    
+    if manager.install_module(module):
+        console.print(f"[green]✓ Module '{module}' installed successfully[/green]")
+        console.print(f"\nModule '{module}' is now available and enabled.")
+        console.print("Configure it in ~/.config/terminalbrain/terminalbrain.toml if needed.")
+    else:
+        console.print(f"[red]✗ Failed to install module '{module}'[/red]")
+        sys.exit(1)
+
+
+@app.command()
+def uninstall(
+    module: str = typer.Argument(..., help="Module to uninstall"),
+) -> None:
+    """Uninstall optional modules."""
+    from terminalbrain.plugins import PluginManager
+    
+    manager = PluginManager()
+    
+    if manager.uninstall_module(module):
+        console.print(f"[green]✓ Module '{module}' uninstalled[/green]")
+    else:
+        console.print(f"[red]✗ Failed to uninstall module '{module}'[/red]")
+        sys.exit(1)
+
+
+@app.command()
+def modules() -> None:
+    """List available and installed modules."""
+    from terminalbrain.plugins import PluginManager, PluginStatus
+    
+    manager = PluginManager()
+    plugins = manager.list_plugins()
+    
+    table = Table(title="Terminal Brain Optional Modules", show_header=True)
+    table.add_column("Module", style="cyan")
+    table.add_column("Status", style="yellow")
+    table.add_column("Description", style="green")
+    
+    descriptions = {
+        "llm": "Local LLM support (Ollama, llama.cpp)",
+        "prediction": "ML-based command prediction",
+        "knowledgebase": "Vector search knowledge base",
+        "voice": "Speech-to-text voice commands",
+        "workflows": "Advanced workflow automation",
+    }
+    
+    for name, status in plugins.items():
+        status_str = status.value.replace("_", " ").title()
+        table.add_row(name, status_str, descriptions.get(name, ""))
+    
+    console.print(table)
+    
+    console.print("\n[bold]Usage:[/bold]")
+    console.print("  terminal-brain install <module>    # Install a module")
+    console.print("  terminal-brain uninstall <module>  # Uninstall a module")
+
+
 def main():
     """Main entry point"""
     import os
