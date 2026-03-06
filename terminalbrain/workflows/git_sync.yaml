@@ -1,0 +1,11 @@
+name: git_sync
+description: Standard git workflow for committing and pushing changes
+commands:
+  - git add .
+  - git commit -m "update"
+  - git push origin main
+frequency: 15
+tags:
+  - git
+  - version-control
+created: 2026-03-06T00:00:00

@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+APP_ROOT="/opt/terminal-brain"
+VENV_DIR="$APP_ROOT/venv"
+SRC_DIR="/usr/share/terminal-brain/src"
+
+mkdir -p "$APP_ROOT"
+
+python3 -m venv "$VENV_DIR"
+"$VENV_DIR/bin/pip" install --no-input --upgrade pip setuptools wheel
+"$VENV_DIR/bin/pip" install --no-input "$SRC_DIR"
+
+exit 0

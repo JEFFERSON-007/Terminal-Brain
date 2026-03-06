@@ -1,0 +1,10 @@
+name: backup_home
+description: Create compressed backup of home directory
+commands:
+  - mkdir -p ~/backups
+  - tar -czf ~/backups/backup_$(date +\%Y\%m\%d).tar.gz ~/
+frequency: 4
+tags:
+  - backup
+  - system-maintenance
+created: 2026-03-06T00:00:00

@@ -1,0 +1,11 @@
+name: docker_deploy
+description: Build and deploy Docker application
+commands:
+  - git pull origin main
+  - docker build -t app:latest .
+  - docker compose up -d
+frequency: 8
+tags:
+  - docker
+  - deployment
+created: 2026-03-06T00:00:00

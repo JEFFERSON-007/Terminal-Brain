@@ -1,0 +1,12 @@
+name: python_test_deploy
+description: Test Python application and deploy
+commands:
+  - python -m pytest tests/
+  - pip install -r requirements.txt
+  - python setup.py sdist
+frequency: 5
+tags:
+  - python
+  - testing
+  - deployment
+created: 2026-03-06T00:00:00

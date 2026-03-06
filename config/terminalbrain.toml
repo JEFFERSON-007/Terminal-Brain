@@ -1,0 +1,162 @@
+# Terminal Brain Default Configuration
+# Location: ~/.config/terminalbrain/terminalbrain.toml
+
+[general]
+# UI theme: dark, light
+theme = "dark"
+
+# Show startup message on first run
+startup_message = true
+
+# Number of suggestions to show by default
+suggestion_frequency = 3
+
+# [advanced]
+# max_history_items = 10000
+# cache_predictions = true
+
+
+[ai]
+# AI Backend: "ollama" (local), "openai" (API), "local" (custom models)
+backend = "ollama"
+
+# Model selection
+# Ollama models: mistral, llama2, neural-chat, codellama
+# OpenAI models: gpt-4, gpt-3.5-turbo
+# Local: path to model file
+model = "mistral"
+
+# LLM temperature (0.0-1.0): Higher = more creative, Lower = more deterministic
+temperature = 0.7
+
+# Maximum suggestions to return
+max_suggestions = 5
+
+# API keys (only if using cloud services)
+# openai_api_key = "sk-..."
+# anthropic_api_key = "..."
+
+# Connection settings
+# ollama_url = "http://localhost:11434"
+# openai_api_base = "https://api.openai.com/v1"
+
+# [advanced]
+# timeout_seconds = 30
+# retry_attempts = 3
+# cache_llm_responses = true
+
+
+[ui]
+# Show real-time system dashboard
+show_dashboard = true
+
+# Dashboard widgets to display
+show_battery = true
+show_network_speed = true
+show_processes = true
+show_time = true
+
+# Dashboard refresh interval in milliseconds
+refresh_interval = 2000
+
+# Color scheme
+# color_scheme = "dark"
+
+# [advanced]
+# max_suggestions_display = 10
+# suggestion_animation = true
+
+
+[security]
+# Commands that require explicit confirmation before execution
+dangerous_commands = [
+    "rm -rf",
+    "mkfs",
+    "dd",
+    ":|",
+    "> /dev",
+    "format",
+    "fdisk",
+]
+
+# Require confirmation before running dangerous commands
+require_confirmation = true
+
+# Commands that are never allowed to be suggested
+# never_suggest = ["shutdown", "reboot"]
+
+
+[knowledge]
+# Enable RAG (Retrieval-Augmented Generation)
+enable_rag = true
+
+# Knowledge source: "tldr", "man", "both"
+knowledge_source = "tldr"
+
+# Cache embeddings for faster subsequent queries
+cache_embeddings = true
+
+# Knowledge base path (optional, defaults to builtin)
+# knowledge_path = "~/.config/terminalbrain/knowledge_base.json"
+
+# [advanced]
+# max_knowledge_items = 5000
+# embedding_model = "all-MiniLM-L6-v2"
+# similarity_threshold = 0.7
+
+
+[history]
+# Load history from these files
+history_files = [
+    "~/.bash_history",
+    "~/.zsh_history",
+    "~/.history",
+]
+
+# Maximum history items to load
+max_history_items = 50000
+
+# [advanced]
+# learn_patterns = true
+# pattern_min_frequency = 3
+
+
+[performance]
+# Maximum time to wait for LLM response (seconds)
+llm_timeout = 30
+
+# Use multiprocessing for ML operations
+use_multiprocessing = true
+
+# Cache predictions to improve performance
+cache_predictions = true
+
+# [advanced]
+# batch_size = 32
+# num_workers = 4
+
+
+[experimental]
+# Enable experimental features
+# voice_commands = false
+# cross_device_sync = false
+# command_visualization = false
+# advanced_ml_models = false
+
+
+# Advanced section with rarely used options
+[advanced]
+# Verbose logging
+verbose = false
+
+# Debug mode
+debug = false
+
+# Log file location
+# log_file = "~/.config/terminalbrain/terminalbrain.log"
+
+# Data directory
+data_dir = "~/.config/terminalbrain/data"
+
+# Custom plugins directory
+# plugins_dir = "~/.config/terminalbrain/plugins"

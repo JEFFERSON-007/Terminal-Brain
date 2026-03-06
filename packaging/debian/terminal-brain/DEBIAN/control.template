@@ -1,0 +1,11 @@
+Package: terminal-brain
+Version: @VERSION@
+Section: utils
+Priority: optional
+Architecture: @ARCH@
+Depends: python3 (>= 3.10), python3-venv, python3-pip
+Maintainer: Terminal Brain Team
+Homepage: https://github.com/<your-org>/terminal-brain
+Description: AI-powered Linux terminal assistant and command recommendation engine
+ Terminal Brain adds AI-assisted command recommendations, workflow automation,
+ command explanation, safety checks, and terminal diagnostics for Linux shells.
