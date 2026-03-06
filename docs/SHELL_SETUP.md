@@ -9,11 +9,18 @@ Terminal Brain now integrates seamlessly with your shell to provide:
 
 ## For Bash
 
-### 1. Add integration to ~/.bashrc
+### 1. Run the setup command
 
 ```bash
-echo 'source ~/.terminalbrain/shell/bash_integration.sh' >> ~/.bashrc
+terminalbrain setup-shell
+# Or explicitly specify bash:
+terminalbrain setup-shell --shell bash
 ```
+
+This will:
+- Copy shell integration files to `~/.terminalbrain/shell/`
+- Add source line to your `~/.bashrc`
+- Set up aliases and real-time predictions
 
 ### 2. Reload your shell
 
@@ -34,11 +41,18 @@ $
 
 ## For Zsh
 
-### 1. Add integration to ~/.zshrc
+### 1. Run the setup command
 
 ```bash
-echo 'source ~/.terminalbrain/shell/zsh_integration.sh' >> ~/.zshrc
+terminalbrain setup-shell --shell zsh
+# Or let it auto-detect if you're already in Zsh:
+terminalbrain setup-shell
 ```
+
+This will:
+- Copy shell integration files to `~/.terminalbrain/shell/`
+- Add source line to your `~/.zshrc`
+- Set up aliases and real-time predictions
 
 ### 2. Reload your shell
 

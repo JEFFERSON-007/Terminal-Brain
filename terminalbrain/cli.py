@@ -378,6 +378,77 @@ def modules() -> None:
     console.print("  terminal-brain uninstall <module>  # Uninstall a module")
 
 
+@app.command(name="setup-shell")
+def setup_shell(
+    shell: str = typer.Option(None, "--shell", "-s", help="Shell type (bash/zsh), auto-detects if not specified")
+) -> None:
+    """Setup shell integration for Terminal Brain."""
+    import os
+    import shutil
+    
+    # Detect shell if not specified
+    if not shell:
+        shell_env = os.environ.get("SHELL", "")
+        if "zsh" in shell_env:
+            shell = "zsh"
+        else:
+            shell = "bash"
+    
+    shell = shell.lower()
+    if shell not in ["bash", "zsh"]:
+        console.print(f"[red]Error: Unsupported shell '{shell}'. Use 'bash' or 'zsh'.[/red]")
+        return
+    
+    # Find the shell integration file in the package
+    import terminalbrain
+    package_dir = Path(terminalbrain.__file__).parent
+    source_file = package_dir / "shell" / f"{shell}_integration.sh"
+    
+    if not source_file.exists():
+        console.print(f"[red]Error: Shell integration file not found at {source_file}[/red]")
+        return
+    
+    # Create target directory
+    target_dir = Path.home() / ".terminalbrain" / "shell"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    
+    target_file = target_dir / f"{shell}_integration.sh"
+    
+    # Copy the file
+    shutil.copy2(source_file, target_file)
+    console.print(f"[green]✓[/green] Copied shell integration to {target_file}")
+    
+    # Determine which rc file to update
+    rc_file = Path.home() / f".{shell}rc"
+    source_line = f"source {target_file}\n"
+    
+    # Check if already added
+    if rc_file.exists():
+        content = rc_file.read_text()
+        if str(target_file) in content:
+            console.print(f"[yellow]![/yellow] Shell integration already configured in {rc_file}")
+        else:
+            # Ask user if they want to add it
+            add_to_rc = typer.confirm(f"\nAdd source line to {rc_file}?", default=True)
+            if add_to_rc:
+                with open(rc_file, "a") as f:
+                    f.write(f"\n# Terminal Brain shell integration\n")
+                    f.write(source_line)
+                console.print(f"[green]✓[/green] Added source line to {rc_file}")
+    else:
+        console.print(f"[yellow]![/yellow] {rc_file} not found. Creating it...")
+        rc_file.write_text(source_line)
+        console.print(f"[green]✓[/green] Created {rc_file} with shell integration")
+    
+    console.print("\n[bold cyan]Setup Complete![/bold cyan]")
+    console.print("\nTo activate the shell integration:")
+    console.print(f"  [yellow]source {rc_file}[/yellow]")
+    console.print("\nOr open a new terminal window.")
+    console.print("\n[bold]Available aliases:[/bold]")
+    console.print("  tb, ask, tbdash, tbpred, tban, tbmod")
+    console.print("\n[bold]Real-time suggestions:[/bold] Enabled automatically on each prompt")
+
+
 def main():
     """Main entry point"""
     import os

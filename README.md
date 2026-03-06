@@ -253,16 +253,21 @@ tb config edit
 
 ### Quick Setup
 
-**For Bash:**
+Run the setup command (auto-detects your shell):
 ```bash
-echo 'source ~/.terminalbrain/shell/bash_integration.sh' >> ~/.bashrc
-source ~/.bashrc
+terminalbrain setup-shell
 ```
 
-**For Zsh:**
+Then reload your shell:
 ```bash
-echo 'source ~/.terminalbrain/shell/zsh_integration.sh' >> ~/.zshrc
-source ~/.zshrc
+source ~/.bashrc  # For Bash
+source ~/.zshrc   # For Zsh
+```
+
+Or specify shell explicitly:
+```bash
+terminalbrain setup-shell --shell bash
+terminalbrain setup-shell --shell zsh
 ```
 
 ### What You Get
