@@ -217,6 +217,30 @@ See [docs/LIGHTWEIGHT_INSTALL.md](docs/LIGHTWEIGHT_INSTALL.md) for detailed opti
 
 ## Quick Start
 
+### 🔍 Interactive Command Search (Like Google!)
+```bash
+terminalbrain search
+# or use the shortcut:
+tbsearch
+
+# Then:
+# Type your search query → See AI-powered suggestions
+# Select a command number → Execute it instantly
+# Continue searching without exiting
+```
+
+Example search flow:
+```
+🔍 Search: find large files
+Results:
+1. find / -type f -size +100M          [95%]
+2. du -h --max-depth=1 | sort -hr      [87%]
+3. ls -lhS /path/to/dir | head         [78%]
+
+→ Action: 1
+✓ Executing: find / -type f -size +100M
+```
+
 ### Ask for Command Suggestions
 ```bash
 tb ask "find large files"

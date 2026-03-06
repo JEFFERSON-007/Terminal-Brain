@@ -72,6 +72,7 @@ Once shell integration is enabled:
 |-------|---------|---------|
 | `tb` | `terminalbrain` | Generic Terminal Brain command |
 | `ask` | `terminalbrain ask` | Ask for command suggestion |
+| `tbsearch` | `terminalbrain search` | **Interactive search (like Google!)** |
 | `tbdash` | `terminalbrain dashboard` | Show system dashboard |
 | `tbpred` | `terminalbrain predict` | Predict next command |
 | `tban` | `terminalbrain analyze` | Analyze command history |
@@ -109,6 +110,39 @@ Terminal Brain automatically runs predictions on every prompt. The predictions a
 **Zsh**: Uses `precmd_functions` to run `terminalbrain predict --quiet`
 
 The `--quiet` flag means suggestions are shown but won't interfere with your work.
+
+## 🔍 Interactive Search Feature
+
+Terminal Brain now includes an interactive search mode that works like Google!
+
+### How to use:
+
+```bash
+tbsearch
+# or
+terminalbrain search
+```
+
+This opens an interactive interface where you can:
+
+1. **Type a search query** - Describe what command you want to find
+2. **See AI-powered suggestions** - Terminal Brain shows matching commands with confidence scores
+3. **Select by number** - Type the number to execute that command  
+4. **Search again** - Type a new query to keep searching
+
+### Examples:
+
+```bash
+tbsearch
+🔍 Search: backup files to external drive
+# Shows: rsync, cp, tar, etc.
+
+🔍 Search: show disk usage
+# Shows: du, df, ncdu, etc.
+
+🔍 Search: find files by date
+# Shows: find with -mtime, -newer, etc.
+```
 
 ## Disabling Real-Time Suggestions
 
