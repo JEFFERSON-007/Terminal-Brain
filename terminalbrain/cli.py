@@ -30,12 +30,12 @@ def ask(
 ) -> None:
     """Ask Terminal Brain for command suggestions"""
 
-    async def _ask():
+    async def _ask(q: str, n: int, exp: bool):
         engine = RecommendationEngine()
         await engine.initialize()
 
         with console.status("[bold cyan]Analyzing query..."):
-            suggestions = await engine.recommend(query, top_n=top_n)
+            suggestions = await engine.recommend(q, top_n=n)
 
         if not suggestions:
             console.print("[red]No suggestions found[/red]")
@@ -59,12 +59,12 @@ def ask(
         console.print(table)
 
         # Show explanations if requested
-        if explain:
+        if exp:
             for i, suggestion in enumerate(suggestions, 1):
                 console.print(f"\n[bold]{i}. {suggestion.command}[/bold]")
                 console.print(f"   {suggestion.explanation}")
 
-    asyncio.run(_ask())
+    asyncio.run(_ask(query, top_n, explain))
 
 
 @app.command()
@@ -74,28 +74,29 @@ def predict(
 ) -> None:
     """Predict next command"""
 
-    async def _predict():
+    async def _predict(cmd: Optional[str], n: int):
         engine = RecommendationEngine()
         await engine.initialize()
 
         # Use last command from history if not provided
-        if not command:
+        current_cmd = cmd
+        if not current_cmd:
             history = HistoryAnalyzer()
             history.load_history()
             if history.commands:
-                command = history.commands[-1]
+                current_cmd = history.commands[-1]
             else:
                 console.print("[red]No command history found[/red]")
                 return
 
         with console.status("[bold cyan]Predicting..."):
-            predictions = await engine.predict_next(command, top_n=top_n)
+            predictions = await engine.predict_next(current_cmd, top_n=n)
 
         if not predictions:
             console.print("[red]No predictions available[/red]")
             return
 
-        console.print(f"\n[bold]Current command:[/bold] {command}")
+        console.print(f"\n[bold]Current command:[/bold] {current_cmd}")
         console.print("[bold]Predicted next commands:[/bold]\n")
 
         table = Table(show_header=True)
@@ -107,7 +108,7 @@ def predict(
 
         console.print(table)
 
-    asyncio.run(_predict())
+    asyncio.run(_predict(command, top_n))
 
 
 @app.command()
@@ -177,11 +178,11 @@ def generate(
 ) -> None:
     """Generate a shell script"""
 
-    async def _generate():
+    async def _generate(desc: str, should_save: bool, fname: Optional[str]):
         engine = RecommendationEngine()
 
         with console.status("[bold cyan]Generating script..."):
-            script = await engine.generate_script(description)
+            script = await engine.generate_script(desc)
 
         if not script:
             console.print("[red]Could not generate script[/red]")
@@ -192,13 +193,13 @@ def generate(
         console.print(syntax)
 
         # Save if requested
-        if save:
-            output_file = Path(filename or "script.sh")
+        if should_save:
+            output_file = Path(fname or "script.sh")
             output_file.write_text(script)
             output_file.chmod(0o755)
             console.print(f"\n[green]Script saved to {output_file}[/green]")
 
-    asyncio.run(_generate())
+    asyncio.run(_generate(description, save, filename))
 
 
 @app.command()
