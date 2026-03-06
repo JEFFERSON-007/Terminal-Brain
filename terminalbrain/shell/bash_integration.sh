@@ -1,36 +1,34 @@
-"""
-Bash integration script for Terminal Brain
-Provides hooks and integration with bash
-"""
+#!/bin/bash
+# Bash integration for Terminal Brain
+# Add real-time suggestions and shortcuts
+# Source this in ~/.bashrc or ~/.bash_profile
 
-# This script should be sourced in ~/.bashrc
-
-# Terminal Brain functions
 export TERMINALBRAIN_ENABLED=1
 
-# Function to get terminal brain suggestions
-tb_suggest() {
-    local query="$*"
-    python3 -m terminalbrain.cli ask "$query"
-}
+# Shorter commands
+alias tb='terminalbrain'
+alias ask='terminalbrain ask'
+alias tbdash='terminalbrain dashboard'
+alias tbpred='terminalbrain predict'
+alias tban='terminalbrain analyze'
 
-# Function to predict next command
-tb_predict() {
-    python3 -m terminalbrain.cli predict
-}
+# Real-time suggestion on every prompt
+# Shows predicted next command before you type
+if [[ -z "$TERMINALBRAIN_PROMPT_DISABLED" ]]; then
+    PROMPT_COMMAND="terminalbrain predict --quiet 2>/dev/null; $PROMPT_COMMAND"
+fi
 
-# Function to show dashboard
-tb_dashboard() {
-    python3 -m terminalbrain.cli dashboard
+# Function for quick help
+tb_help() {
+    echo "Terminal Brain shortcuts:"
+    echo "  tb <query>        - Ask for command suggestion"
+    echo "  ask <query>       - Alias for 'tb'"
+    echo "  tbdash            - Show system dashboard"
+    echo "  tbpred            - Predict next command"
+    echo "  tban              - Analyze command history"
+    echo ""
+    echo "Examples:"
+    echo "  tb find large files"
+    echo "  tb backup home directory"
+    echo "  tb show disk usage"
 }
-
-# Function to generate scripts
-tb_generate() {
-    local description="$*"
-    python3 -m terminalbrain.cli generate "$description"
-}
-
-# Alias shortcuts
-alias ask='tb_suggest'
-alias tb='tb_suggest'
-alias tbdash='tb_dashboard'

@@ -1,44 +1,43 @@
-"""
-ZSH integration script for Terminal Brain
-Provides hooks and integration with zsh
-"""
-
-# This script should be sourced in ~/.zshrc
+#!/bin/zsh
+# Zsh integration for Terminal Brain
+# Add real-time suggestions and shortcuts
+# Source this in ~/.zshrc
 
 export TERMINALBRAIN_ENABLED=1
 
-# Terminal Brain functions
-tb_suggest() {
-    local query="$*"
-    python3 -m terminalbrain.cli ask "$query"
-}
+# Shorter commands
+alias tb='terminalbrain'
+alias ask='terminalbrain ask'
+alias tbdash='terminalbrain dashboard'
+alias tbpred='terminalbrain predict'
+alias tban='terminalbrain analyze'
+alias tbmod='terminalbrain modules'
 
-tb_predict() {
-    python3 -m terminalbrain.cli predict
-}
-
-tb_dashboard() {
-    python3 -m terminalbrain.cli dashboard
-}
-
-tb_generate() {
-    local description="$*"
-    python3 -m terminalbrain.cli generate "$description"
-}
-
-# ZSH completion
-_tb_completion() {
-    local cur=${words[CURRENT]}
-    local options="ask predict dashboard generate config analyze knowledge version"
+# Real-time suggestion on every prompt
+if [[ -z "$TERMINALBRAIN_PROMPT_DISABLED" ]]; then
+    precmd_functions+=(terminalbrain_prompt)
     
-    if [[ $CURRENT -eq 2 ]]; then
-        compadd $(echo "$options" | tr ' ' '\n')
-    fi
+    terminalbrain_prompt() {
+        terminalbrain predict --quiet 2>/dev/null || true
+    }
+fi
+
+# Zsh completion for terminalbrain
+if command -v terminalbrain &>/dev/null; then
+    eval "$(terminalbrain --show-completion zsh 2>/dev/null || true)"
+fi
+
+# Quick help
+tb_help() {
+    echo "Terminal Brain shortcuts:"
+    echo "  tb <query>        - Ask for command suggestion"
+    echo "  ask <query>       - Alias for 'tb'"
+    echo "  tbdash            - Show system dashboard"
+    echo "  tbpred            - Predict next command"
+    echo "  tban              - Analyze command history"
+    echo "  tbmod             - List modules"
+    echo ""
+    echo "Examples:"
+    echo "  tb find large files"
+    echo "  tb backup home directory"
 }
-
-compdef _tb_completion tb
-
-# Aliases
-alias ask='tb_suggest'
-alias tb='tb_suggest'
-alias tbdash='tb_dashboard'
