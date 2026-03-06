@@ -151,6 +151,8 @@ Workflow file:
 
 - [.github/workflows/debian-package.yml](../../.github/workflows/debian-package.yml)
 
+By default, repository publishing is opt-in. Set repository variable `ENABLE_PAGES_PUBLISH=true` to enable the `publish-pages` job.
+
 Pipeline stages:
 
 1. Build `.deb` using `./scripts/build_deb.sh`
