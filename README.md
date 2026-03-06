@@ -247,6 +247,50 @@ tb config edit
 # Opens terminalbrain.toml in your editor
 ```
 
+## Shell Integration & Real-Time Suggestions
+
+**New in v2.0**: Terminal Brain now integrates with your shell for instant access and real-time suggestions.
+
+### Quick Setup
+
+**For Bash:**
+```bash
+echo 'source ~/.terminalbrain/shell/bash_integration.sh' >> ~/.bashrc
+source ~/.bashrc
+```
+
+**For Zsh:**
+```bash
+echo 'source ~/.terminalbrain/shell/zsh_integration.sh' >> ~/.zshrc
+source ~/.zshrc
+```
+
+### What You Get
+
+✅ **Short aliases**: `tb`, `ask`, `tbdash`, `tbpred`, `tban`, `tbmod`  
+✅ **Real-time predictions**: Suggestions appear automatically before each prompt  
+✅ **Shell completion**: Autocomplete for all Terminal Brain commands  
+✅ **One-letter shortcuts**: Type less, do more  
+
+### Examples
+
+```bash
+# Short aliases work immediately
+$ tb find large files
+# Suggests: find / -type f -size +100M
+
+$ ask backup my documents
+# Suggests commands for backing up documents
+
+# Predictions appear automatically on each prompt
+$ ls
+$ cd Documents
+[Terminal Brain prediction: your next command might be...]
+$ 
+```
+
+For detailed shell setup and troubleshooting, see [docs/SHELL_SETUP.md](docs/SHELL_SETUP.md).
+
 ## Configuration (terminalbrain.toml)
 
 ```toml
